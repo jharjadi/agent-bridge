@@ -1,0 +1,31 @@
+{
+  "message_id": "0002",
+  "task_id": "TASK-20260101-001",
+  "from": "codex",
+  "to": "claude",
+  "type": "review_request",
+  "created_at": "2026-01-01T10:15:00Z",
+  "in_reply_to": "0001",
+  "summary": "Ready for review",
+  "body": {
+    "goal": "Implement login retry backoff",
+    "what_changed": [
+      "Added retry policy",
+      "Integrated retry policy into login flow",
+      "Added tests"
+    ],
+    "files_changed": [
+      "src/auth/retry.ts",
+      "src/auth/login.ts",
+      "tests/auth/retry.test.ts"
+    ],
+    "review_focus": [
+      "correctness",
+      "edge cases",
+      "test coverage"
+    ],
+    "base_commit": "abc1234",
+    "head_commit": "def5678"
+  },
+  "status": "open"
+}

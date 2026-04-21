@@ -1,0 +1,18 @@
+{
+  "message_id": "0001",
+  "task_id": "TASK-20260101-001",
+  "from": "human",
+  "to": "codex",
+  "type": "task_created",
+  "created_at": "2026-01-01T09:00:00Z",
+  "in_reply_to": null,
+  "summary": "Task created: Implement login retry backoff",
+  "body": {
+    "title": "Implement login retry backoff",
+    "repo": "example-repo",
+    "branch": "main",
+    "head_commit": "abc1234",
+    "notes": "Add bounded retry behavior and tests."
+  },
+  "status": "open"
+}

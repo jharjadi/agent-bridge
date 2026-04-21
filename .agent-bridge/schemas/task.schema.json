@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "created_at",
+    "created_by",
+    "status",
+    "assigned_to",
+    "reviewer",
+    "thread_path",
+    "latest_message_id",
+    "archive_status"
+  ],
+  "properties": {
+    "task_id": {"type": "string"},
+    "title": {"type": "string"},
+    "created_at": {"type": "string"},
+    "created_by": {"type": "string"},
+    "status": {"type": "string", "enum": ["pending", "in_progress", "blocked", "completed"]},
+    "assigned_to": {"type": "string", "enum": ["claude", "codex"]},
+    "reviewer": {"type": "string", "enum": ["claude", "codex"]},
+    "thread_path": {"type": "string"},
+    "latest_message_id": {"type": "string"},
+    "latest_head_commit": {"type": ["string", "null"]},
+    "legacy_id": {"type": "string"},
+    "migration_source": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "archive_status": {"type": "string", "enum": ["active", "archived"]}
+  },
+  "additionalProperties": true
+}

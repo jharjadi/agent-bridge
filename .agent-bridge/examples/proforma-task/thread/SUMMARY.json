@@ -1,0 +1,16 @@
+{
+  "task_id": "TASK-20260101-001",
+  "current_status": "in_progress",
+  "latest_message_id": "0003",
+  "latest_head_commit": "def5678",
+  "participants": [
+    "claude",
+    "codex",
+    "human"
+  ],
+  "recent_summaries": [
+    "Task created: Implement login retry backoff",
+    "Ready for review",
+    "1 issue found"
+  ]
+}

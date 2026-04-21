@@ -1,0 +1,26 @@
+.DS_Store
+
+# Runtime task registry and thread state
+archive/*
+inbox/claude/*
+inbox/codex/*
+locks/*
+registry/index.json
+registry/tasks/*
+state/*.json
+threads/*
+
+# Keep scaffold directories in git
+!archive/.gitkeep
+!inbox/.gitkeep
+!inbox/claude/.gitkeep
+!inbox/codex/.gitkeep
+!locks/.gitkeep
+!registry/.gitkeep
+!registry/tasks/.gitkeep
+!state/.gitkeep
+!threads/.gitkeep
+
+# Keep packaged examples in git
+!examples/
+!examples/**

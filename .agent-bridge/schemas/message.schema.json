@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "message_id",
+    "task_id",
+    "from",
+    "to",
+    "type",
+    "created_at",
+    "summary",
+    "body",
+    "status"
+  ],
+  "properties": {
+    "message_id": {"type": "string"},
+    "task_id": {"type": "string"},
+    "from": {"type": "string", "enum": ["human", "claude", "codex"]},
+    "to": {"type": "string", "enum": ["human", "claude", "codex"]},
+    "type": {
+      "type": "string",
+      "enum": [
+        "task_created",
+        "status_update",
+        "question",
+        "answer",
+        "review_request",
+        "review_response",
+        "changes_applied",
+        "approval",
+        "blocked",
+        "stale_review_notice",
+        "task_completed",
+        "task_archived"
+      ]
+    },
+    "created_at": {"type": "string"},
+    "in_reply_to": {"type": ["string", "null"]},
+    "summary": {"type": "string"},
+    "body": {"type": "object"},
+    "status": {"type": "string", "enum": ["open", "closed", "superseded"]}
+  },
+  "additionalProperties": true
+}
