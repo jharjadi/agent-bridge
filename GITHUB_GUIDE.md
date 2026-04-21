@@ -4,7 +4,7 @@ Welcome to the Agent Bridge repository! This guide will help you navigate, contr
 
 ## 🎯 Repository Overview
 
-This repository demonstrates **revolutionary AI agent collaboration** using a structured, file-based coordination system. It's both a working tool AND a live demonstration of how AI agents can work together.
+This repository demonstrates a structured, file-based coordination system for AI agents. It is both a working tool and a live demonstration of how agents can coordinate through explicit task and review workflows.
 
 ## 📁 Repository Structure
 
@@ -59,23 +59,23 @@ cd agent-bridge
 ```
 
 This runs a full agent collaboration cycle:
-- Task creation → Implementation → Review → Approval → Completion
+- Task creation → task assignment → review cycle → approval → completion
 
 ### 🎥 Watch Agent Bridge in Action  
 
 The demo shows:
 1. **🎯 Task Assignment** - Human creates task, assigns to agents
-2. **🔧 Implementation** - Codex implements the feature  
-3. **🔍 Code Review** - Claude provides structured feedback
-4. **🔄 Iteration** - Codex addresses feedback  
-5. **✅ Approval** - Claude approves final implementation
+2. **🔧 Task Work** - The assigned agent implements or updates the task
+3. **🔍 Code Review** - The reviewer provides structured feedback
+4. **🔄 Iteration** - The assignee addresses feedback
+5. **✅ Approval** - The reviewer approves the requested snapshot
 6. **📊 Completion** - Task marked done with full audit trail
 
 ## 🤖 Agent Collaboration Features
 
 ### 🎯 For AI Agents
 - **Structured Communication** - JSON message schemas
-- **Clear Workflows** - Defined roles and responsibilities  
+- **Clear Workflows** - Explicit task assignment and review handoffs
 - **Audit Trail** - Every action logged and traceable
 - **Git Integration** - Commit-bound reviews and changes
 - **Resumable Work** - Pick up where others left off
@@ -90,7 +90,7 @@ The demo shows:
 ## 📋 Common Use Cases
 
 ### 🔧 Development Workflows
-- **Code Implementation** - One agent writes, another reviews
+- **Code Implementation** - Either agent can implement while the other reviews
 - **Documentation** - Collaborative writing and editing
 - **Testing** - Implementation and validation coordination
 
@@ -125,16 +125,16 @@ cd my-agent-project
 ### ⚡ CLI Usage
 ```bash
 # Create collaborative tasks
-python3 .agent-bridge/tools/bridge.py new-task --title "Feature X" --assigned-to codex --reviewer claude
+python3 .agent-bridge/tools/bridge.py new-task --title "Feature X" --assigned-to claude --reviewer codex
 
-# Check agent inboxes  
-python3 .agent-bridge/tools/bridge.py inbox claude
+# Check agent inboxes
+python3 .agent-bridge/tools/bridge.py inbox codex
 
 # Send structured messages
-python3 .agent-bridge/tools/bridge.py send --task-id TASK-123 --message-type review_request --body request.json
+python3 .agent-bridge/tools/bridge.py send --task TASK-123 --from claude --to codex --type review_request --summary "Ready for review" --body-file request.json
 
 # Complete tasks
-python3 .agent-bridge/tools/bridge.py complete --task-id TASK-123
+python3 .agent-bridge/tools/bridge.py complete TASK-123 --from claude
 ```
 
 ## 📊 Repository Status

@@ -1,6 +1,6 @@
 # Agent Bridge
 
-`agent-bridge/` is a portable, file-based coordination layer for a two-agent workflow where Codex usually implements and Claude usually reviews.
+`agent-bridge/` is a portable, file-based coordination layer for a two-agent workflow where either agent can implement or review, depending on the task.
 
 It is designed to be copied into another repository as a self-contained folder. The live workflow is append-only, task-based, and Git-friendly:
 
@@ -80,15 +80,15 @@ agent-bridge/
 ```bash
 python3 agent-bridge/tools/bridge.py new-task \
   --title "Implement login retry backoff" \
-  --assigned-to codex \
-  --reviewer claude
+  --assigned-to claude \
+  --reviewer codex
 ```
 
 This creates:
 
 - `registry/tasks/TASK-...json`
 - `threads/TASK-.../0001-task-created.json`
-- `inbox/codex/TASK-...json`
+- `inbox/claude/TASK-...json`
 
 ### 2. Send progress or questions
 
@@ -108,8 +108,8 @@ Then send it:
 ```bash
 python3 agent-bridge/tools/bridge.py send \
   --task TASK-20260421-001 \
-  --from codex \
-  --to claude \
+  --from claude \
+  --to codex \
   --type status_update \
   --summary "Implementation underway" \
   --body-file /tmp/body.json
@@ -120,8 +120,8 @@ python3 agent-bridge/tools/bridge.py send \
 ```bash
 python3 agent-bridge/tools/bridge.py send \
   --task TASK-20260421-001 \
-  --from codex \
-  --to claude \
+  --from claude \
+  --to codex \
   --type review_request \
   --summary "Ready for review" \
   --body-file /tmp/review-request.json
@@ -138,7 +138,7 @@ Review requests should include:
 ### 4. Read inbox and thread
 
 ```bash
-python3 agent-bridge/tools/bridge.py inbox claude
+python3 agent-bridge/tools/bridge.py inbox codex
 python3 agent-bridge/tools/bridge.py read TASK-20260421-001
 python3 agent-bridge/tools/bridge.py summarize TASK-20260421-001
 ```
@@ -146,7 +146,7 @@ python3 agent-bridge/tools/bridge.py summarize TASK-20260421-001
 ### 5. Complete and archive
 
 ```bash
-python3 agent-bridge/tools/bridge.py complete TASK-20260421-001 --from codex
+python3 agent-bridge/tools/bridge.py complete TASK-20260421-001 --from claude
 python3 agent-bridge/tools/bridge.py archive TASK-20260421-001
 ```
 

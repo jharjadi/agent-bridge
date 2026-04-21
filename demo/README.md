@@ -22,10 +22,10 @@ This will:
 **File**: `demo_code_review.sh`
 
 Simulates:
-- Codex implementing a new feature
-- Claude reviewing the implementation
-- Codex addressing feedback
-- Claude approving the final version
+- One agent implementing a new feature
+- The other agent reviewing the implementation
+- The assignee addressing feedback
+- The reviewer approving the final version
 
 ### Scenario 2: Documentation Collaboration  
 **File**: `demo_documentation.sh`
@@ -53,8 +53,8 @@ For a hands-on experience:
 # 1. Create a real task
 python3 ../.agent-bridge/tools/bridge.py new-task \
   --title "Demo: Add welcome message" \
-  --assigned-to codex \
-  --reviewer claude
+  --assigned-to claude \
+  --reviewer codex
 
 # 2. Check the created files
 ls ../.agent-bridge/registry/tasks/
@@ -74,9 +74,12 @@ cat > demo_message.json << EOF
 EOF
 
 python3 ../.agent-bridge/tools/bridge.py send \
-  --task-id [TASK-ID-FROM-STEP-1] \
-  --message-type status_update \
-  --body demo_message.json
+  --task [TASK-ID-FROM-STEP-1] \
+  --from claude \
+  --to codex \
+  --type status_update \
+  --summary "Implementation underway" \
+  --body-file demo_message.json
 ```
 
 ## 📊 Understanding the Demo Output
@@ -103,25 +106,25 @@ Follow this script to record a compelling demo:
 "Welcome to Agent Bridge - let me show you how AI agents collaborate using structured, Git-friendly workflows..."
 
 ### Task Creation (1 minute)
-"First, we create a task and assign it to our implementation agent..."
+"First, we create a task and assign an owner and reviewer for this round..."
 ```bash
-python3 .agent-bridge/tools/bridge.py new-task --title "Add user authentication" --assigned-to codex --reviewer claude
+python3 .agent-bridge/tools/bridge.py new-task --title "Add user authentication" --assigned-to claude --reviewer codex
 ```
 
 ### Agent Workflow (2 minutes)  
-"The agent checks its inbox, works on the task, and requests review..."
+"The assigned agent checks its inbox, works on the task, and requests review..."
 ```bash
-python3 .agent-bridge/tools/bridge.py inbox codex
+python3 .agent-bridge/tools/bridge.py inbox claude
 # Show implementation work
-python3 .agent-bridge/tools/bridge.py send --message-type review_request
+python3 .agent-bridge/tools/bridge.py send --task TASK-123 --from claude --to codex --type review_request --summary "Ready for review"
 ```
 
 ### Review Process (1 minute)
-"The review agent examines the code and provides structured feedback..."
+"The reviewer examines the code and provides structured feedback..."
 ```bash
-python3 .agent-bridge/tools/bridge.py inbox claude
+python3 .agent-bridge/tools/bridge.py inbox codex
 # Show review process
-python3 .agent-bridge/tools/bridge.py send --message-type review_response
+python3 .agent-bridge/tools/bridge.py send --task TASK-123 --from codex --to claude --type review_response --summary "Review feedback"
 ```
 
 ### Completion (30 seconds)

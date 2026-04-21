@@ -1,150 +1,128 @@
-# 🤖 Agent Bridge: File-Based AI Agent Collaboration System
+# Agent Bridge
 
-> **A revolutionary coordination layer that enables structured collaboration between AI agents using Git-friendly, append-only workflows.**
+Agent Bridge is a portable, file-based coordination layer for two-agent workflows.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Agent-Friendly](https://img.shields.io/badge/Agent-Friendly-blue.svg)](.agent-bridge/)
-[![Git-Native](https://img.shields.io/badge/Git-Native-green.svg)](.agent-bridge/.gitignore)
+It is designed for workflows where task roles are explicit, but not tied to a specific agent identity. Either agent can implement or review on a given task. The bridge keeps that workflow explicit by storing tasks, messages, and review requests as files inside the repository.
 
-## 🚀 What is Agent Bridge?
+This repository includes:
 
-Agent Bridge is a portable, file-based coordination system designed for **two-agent workflows** where different AI agents (like Codex and Claude) collaborate on tasks with clearly defined roles - typically one for implementation and another for review.
+- `.agent-bridge/`: the packaged bridge folder you can copy into another repository
+- `demo/`: small scripts that demonstrate the workflow end to end
+- top-level docs and draft material used to explain the project
 
-### ✨ Key Features
+## What It Does
 
-- **📁 File-Based**: Everything stored as JSON files - no databases, no servers
-- **🔄 Git-Friendly**: Append-only design that works perfectly with version control
-- **🎯 Task-Oriented**: One task record per task, one thread folder per task
-- **🔒 Commit-Bound Reviews**: Reviews tied to exact Git commits for precision
-- **📮 Inbox System**: Each agent has their own inbox for pending work
-- **🏗️ Portable**: Drop into any repository as a self-contained folder
+Agent Bridge is built around a few constraints:
 
-## 🏆 Why This Matters
+- file-based runtime state instead of a database or service
+- append-only task threads and inbox pointers
+- review requests bound to exact commits
+- JSON schemas for task and message structure
+- a layout that can be copied into another repository as-is
 
-Traditional AI agent collaboration often lacks structure and auditability. Agent Bridge solves this by providing:
+The current starter kit is intentionally narrow in scope. It is designed for a two-agent workflow, not a general orchestration framework.
 
-1. **Structured Communication**: All messages follow JSON schemas
-2. **Clear Accountability**: Every action is logged with timestamps and commits
-3. **Resumable Workflows**: Agents can pick up where others left off
-4. **Review Integrity**: Code reviews are bound to specific commits
-5. **Human Oversight**: Transparent, file-based workflow humans can inspect
+## Why Use It
 
-## 🎬 Live Demonstration
+Most of the value comes from making agent handoffs more explicit:
 
-This repository **itself** demonstrates agent collaboration! The Agent Bridge system coordinates:
+- tasks have durable records
+- review requests can point to a specific code state
+- inboxes make pending work visible
+- runtime files can stay out of Git while the tooling stays in Git
 
-- **🔧 Implementation Agent** (typically Codex): Writes code, implements features
-- **🔍 Review Agent** (typically Claude): Reviews code, provides feedback
-- **👥 Human Oversight**: Monitors and guides the collaboration
+If your team wants a lightweight coordination layer that can live inside an existing repository, that is the use case this project is aimed at.
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Install into Your Repository
+### Run the demo
 
 ```bash
-# Copy the entire .agent-bridge/ folder to your project root
-cp -r .agent-bridge/ /path/to/your/project/
-
-# Or rename to visible folder if you prefer
-mv .agent-bridge/ agent-bridge/
+./demo/run_demo.sh
 ```
 
-### 2. Start Collaborating
+The demo walks through task creation, inbox handling, review requests, and completion.
+
+### Install into another repository
+
+1. Copy `.agent-bridge/` into the root of the target repository.
+2. Commit it as part of that repository.
+3. Tell both agents to read:
+   - `.agent-bridge/AGENTS.md`
+   - `.agent-bridge/CODEX.md`
+   - `.agent-bridge/CLAUDE.md`
+
+If you prefer a visible folder name, you can rename `.agent-bridge/` to `agent-bridge/`. The CLI detects the folder name automatically, but you should update your instruction paths and examples to match.
+
+## Basic Workflow
+
+Create a task:
 
 ```bash
-# Create a new task
 python3 .agent-bridge/tools/bridge.py new-task \
   --title "Implement user authentication" \
-  --assigned-to codex \
-  --reviewer claude
+  --assigned-to claude \
+  --reviewer codex
+```
 
-# Check your inbox
+Check an inbox:
+
+```bash
 python3 .agent-bridge/tools/bridge.py inbox claude
+```
 
-# Send progress updates
+Send a review request:
+
+```bash
 python3 .agent-bridge/tools/bridge.py send \
-  --task-id TASK-xxx \
-  --message-type review_request \
-  --body review_body.json
+  --task TASK-20260421-001 \
+  --from claude \
+  --to codex \
+  --type review_request \
+  --summary "Ready for review" \
+  --body-file /tmp/review-request.json
 ```
 
-## 📋 Workflow Example
+Read a task thread:
 
-```
-1. Human creates task → assigned to Implementation Agent
-2. Implementation Agent works → requests review
-3. Review Agent examines code → provides feedback
-4. Implementation Agent applies changes → re-requests review  
-5. Review Agent approves → task completed
+```bash
+python3 .agent-bridge/tools/bridge.py read TASK-20260421-001
 ```
 
-Every step is logged, traceable, and resumable.
+Complete and archive it:
 
-## 📁 Project Structure
-
-```
-.agent-bridge/
-├── README.md              # Detailed technical documentation
-├── AGENTS.md              # Shared operating instructions
-├── CLAUDE.md              # Claude-specific instructions  
-├── CODEX.md               # Codex-specific instructions
-├── tools/
-│   ├── bridge.py          # Main CLI tool
-│   └── stop_hook.sh       # Notification helper
-├── examples/
-│   └── proforma-task/     # Example task & thread
-├── schemas/               # JSON schemas for validation
-├── inbox/                 # Agent inboxes (runtime)
-├── registry/              # Task registry (runtime)
-├── threads/               # Task conversations (runtime)
-└── state/                 # System state (runtime)
+```bash
+python3 .agent-bridge/tools/bridge.py complete TASK-20260421-001 --from codex
+python3 .agent-bridge/tools/bridge.py archive TASK-20260421-001
 ```
 
-## 🛠️ Technical Highlights
+## Repository Layout
 
-- **Zero Dependencies**: Pure Python 3, no external packages
-- **Schema Validation**: All messages validated against JSON schemas
-- **Atomic Operations**: File-based locking prevents race conditions
-- **Git Integration**: Designed to work seamlessly with Git workflows
-- **Cross-Platform**: Works on any system with Python 3
+The packaged bridge lives in `.agent-bridge/` and includes:
 
-## 🎯 Use Cases
+- `tools/bridge.py`: the CLI
+- `schemas/`: JSON schemas for tasks and messages
+- `AGENTS.md`, `CODEX.md`, `CLAUDE.md`: instructions for participating agents
+- scaffold directories for runtime state
+- `examples/proforma-task/`: a reference task and thread
 
-- **Code Review Workflows**: Automated code review with AI agents
-- **Documentation Generation**: One agent writes, another reviews and refines
-- **Testing Coordination**: Implementation and validation agents working together
-- **Research Projects**: Structured collaboration between reasoning agents
-- **Quality Assurance**: Systematic review processes for AI-generated content
+For a more detailed walkthrough of the packaged folder, see [.agent-bridge/README.md](.agent-bridge/README.md).
 
-## 🤝 Contributing to Agent Collaboration
+## Current Scope
 
-This project itself uses Agent Bridge! To contribute:
+This repository is intentionally modest in scope:
 
-1. Check active tasks: `python3 .agent-bridge/tools/bridge.py list-tasks`
-2. Review agent inboxes: `python3 .agent-bridge/tools/bridge.py inbox [agent]`
-3. Follow the collaboration patterns demonstrated in the examples
+- the bridge is aimed at two-agent workflows
+- runtime state is file-based
+- there is no external service, dashboard, or dependency stack
+- teams can layer their own automation on top if they need more
 
-## 📚 Documentation
+That makes it easier to copy, inspect, and adapt, but it also means it is not trying to solve every orchestration problem.
 
-- **[Technical README](.agent-bridge/README.md)**: Complete implementation details
-- **[Agent Instructions](.agent-bridge/AGENTS.md)**: How agents should behave
-- **[Example Task](.agent-bridge/examples/proforma-task/)**: Sample workflow
-- **[JSON Schemas](.agent-bridge/schemas/)**: Message format specifications
+## Contributing
 
-## 🔮 Future Possibilities
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor workflow and verification guidance.
 
-- Multi-agent workflows (beyond two agents)
-- Integration with GitHub Actions
-- Slack/Discord notifications
-- Web dashboard for monitoring
-- Plugin system for custom workflows
+## License
 
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-**Ready to revolutionize AI agent collaboration?** Drop Agent Bridge into your repository and watch structured, accountable AI teamwork in action! 🚀
-
-*Built with ❤️ for the future of AI collaboration*
+MIT. See [LICENSE](LICENSE).

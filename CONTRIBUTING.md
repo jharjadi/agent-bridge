@@ -1,181 +1,122 @@
-# Contributing to Agent Bridge 🤖
+# Contributing to Agent Bridge
 
-Thank you for your interest in contributing to Agent Bridge! This project demonstrates and facilitates AI agent collaboration, and we welcome both human and agent contributions.
+Thanks for taking a look at the project.
 
-## 🚀 How This Project Works
+This repository contains two related things:
 
-**Agent Bridge uses itself for development!** This means:
+- the packaged `.agent-bridge/` folder that can be copied into another repository
+- docs and demos that explain how the workflow is meant to operate
 
-- Implementation work is typically done by AI agents (like Codex)
-- Code reviews are typically done by AI agents (like Claude)  
-- Humans provide oversight, guidance, and final approval
-- All collaboration happens through the `.agent-bridge/` system
+Good contributions include fixes to the CLI, schema changes, documentation improvements, and better examples.
 
-## 📋 Before Contributing
+## Before You Start
 
-1. **Understand the Agent Bridge System**
-   - Read the main [README.md](README.md)
-   - Review [.agent-bridge/README.md](.agent-bridge/README.md) for technical details
-   - Check out the [example workflow](.agent-bridge/examples/proforma-task/)
+Read these first:
 
-2. **Check Active Work**
-   ```bash
-   # See what's currently being worked on
-   python3 .agent-bridge/tools/bridge.py list-tasks
-   
-   # Check agent inboxes
-   python3 .agent-bridge/tools/bridge.py inbox claude
-   python3 .agent-bridge/tools/bridge.py inbox codex
-   ```
+- [README.md](README.md)
+- [.agent-bridge/README.md](.agent-bridge/README.md)
+- [.agent-bridge/examples/proforma-task/](.agent-bridge/examples/proforma-task/)
 
-## 🤝 Contribution Workflows
+If your change affects agent instructions, also review:
 
-### 🤖 AI Agent Contributors
+- [.agent-bridge/AGENTS.md](.agent-bridge/AGENTS.md)
+- [.agent-bridge/CODEX.md](.agent-bridge/CODEX.md)
+- [.agent-bridge/CLAUDE.md](.agent-bridge/CLAUDE.md)
 
-If you're an AI agent wanting to contribute:
+## Typical Contribution Flow
 
-1. **Read the Agent Instructions**
-   - [.agent-bridge/AGENTS.md](.agent-bridge/AGENTS.md) - General instructions
-   - [.agent-bridge/CLAUDE.md](.agent-bridge/CLAUDE.md) - Claude-specific instructions
-   - [.agent-bridge/CODEX.md](.agent-bridge/CODEX.md) - Codex-specific instructions
+1. Create a branch for a focused change.
+2. Make the smallest change that solves the problem clearly.
+3. Update docs or examples if the CLI, schema, or workflow changed.
+4. Run the relevant verification commands.
+5. Open a pull request with a short explanation of what changed and how you checked it.
 
-2. **Follow the Bridge Workflow**
-   ```bash
-   # Check your inbox first
-   python3 .agent-bridge/tools/bridge.py inbox [your-agent-name]
-   
-   # Create or work on tasks using the bridge system
-   python3 .agent-bridge/tools/bridge.py new-task --title "Your contribution"
-   ```
+Direct pull requests are fine. If you want to use Agent Bridge itself while working on the repo, that is also fine, but it is not required for every contribution.
 
-3. **Maintain Quality Standards**
-   - All messages must follow JSON schemas in `.agent-bridge/schemas/`
-   - Include commit references for code reviews
-   - Write clear, structured summaries
-   - Respond to review feedback promptly
+The bridge assigns roles per task. `assigned-to` and `reviewer` describe the current task, not fixed capabilities of `codex` or `claude`.
 
-### 👥 Human Contributors
+## Working With the Bridge
 
-If you're a human contributor:
+If you are testing or demonstrating the workflow itself, the main commands are:
 
-1. **Direct Contributions**
-   - Fork the repository
-   - Create a feature branch
-   - Make your changes
-   - Submit a pull request
+Create a task:
 
-2. **Coordinating Agent Work**
-   ```bash
-   # Create tasks for agents to work on
-   python3 .agent-bridge/tools/bridge.py new-task \
-     --title "Feature: Add new capability" \
-     --assigned-to codex \
-     --reviewer claude
-   
-   # Monitor and guide agent collaboration
-   python3 .agent-bridge/tools/bridge.py inbox [agent]
-   ```
-
-3. **Improving the Bridge System**
-   - Enhancements to `bridge.py` tool
-   - New JSON schemas
-   - Documentation improvements
-   - Example workflows
-
-## 🎯 Contribution Areas
-
-### High Priority
-- **Bridge Tool Enhancements**: New features for `bridge.py`
-- **Schema Improvements**: Better message validation
-- **Documentation**: More examples and use cases
-- **Integration Examples**: GitHub Actions, webhooks, etc.
-
-### Medium Priority  
-- **Multi-Agent Support**: Beyond two-agent workflows
-- **Notification Systems**: Slack, Discord integrations
-- **Web Dashboard**: Visual interface for monitoring
-- **Performance**: Optimizations for large-scale usage
-
-### Ideas Welcome
-- **Plugin System**: Custom workflow extensions
-- **Analytics**: Collaboration metrics and insights
-- **Testing Framework**: Automated workflow testing
-- **Templates**: Ready-made collaboration patterns
-
-## 📝 Standards & Guidelines
-
-### Code Quality
-- Follow existing code style and patterns
-- Add tests for new functionality  
-- Update documentation for changes
-- Ensure backwards compatibility
-
-### Agent Collaboration Quality
-- Use structured JSON messages
-- Include proper commit references
-- Write clear task descriptions
-- Provide actionable review feedback
-
-### Documentation
-- Update README.md for significant changes
-- Add examples for new features
-- Keep agent instructions current
-- Document breaking changes
-
-## 🧪 Testing Your Contributions
-
-### Manual Testing
 ```bash
-# Test basic bridge functionality
-python3 .agent-bridge/tools/bridge.py --help
-
-# Test task creation
-python3 .agent-bridge/tools/bridge.py new-task --title "Test task" --assigned-to test
-
-# Validate JSON schemas
-python3 -c "import json; json.load(open('.agent-bridge/schemas/task.schema.json'))"
+python3 .agent-bridge/tools/bridge.py new-task \
+  --title "Example contribution" \
+  --assigned-to claude \
+  --reviewer codex
 ```
 
-### Integration Testing
-- Test with actual AI agents if possible
-- Verify Git integration works correctly
-- Check file locking under concurrent access
-- Validate schema compliance
+Check an inbox:
 
-## 🚀 Getting Started
+```bash
+python3 .agent-bridge/tools/bridge.py inbox codex
+python3 .agent-bridge/tools/bridge.py inbox claude
+```
 
-1. **Fork and Clone**
-   ```bash
-   git clone https://github.com/[your-username]/agent-bridge.git
-   cd agent-bridge
-   ```
+Send a message:
 
-2. **Set Up Development Environment**
-   ```bash
-   # No dependencies needed! Pure Python 3
-   python3 .agent-bridge/tools/bridge.py --help
-   ```
+```bash
+python3 .agent-bridge/tools/bridge.py send \
+  --task TASK-20260421-001 \
+  --from claude \
+  --to codex \
+  --type status_update \
+  --summary "Implementation underway" \
+  --body-file /tmp/body.json
+```
 
-3. **Make Your First Contribution**
-   - Start with documentation improvements
-   - Fix small bugs or add minor features
-   - Propose new examples or use cases
+Read or summarize a thread:
 
-## 📞 Getting Help
+```bash
+python3 .agent-bridge/tools/bridge.py read TASK-20260421-001
+python3 .agent-bridge/tools/bridge.py summarize TASK-20260421-001
+```
 
-- **Issues**: Use GitHub Issues for bug reports and feature requests
-- **Discussions**: Use GitHub Discussions for questions and ideas  
-- **Agent Inbox**: If you're an AI agent, check your inbox in `.agent-bridge/inbox/`
+Complete and archive a task:
 
-## 🌟 Recognition
+```bash
+python3 .agent-bridge/tools/bridge.py complete TASK-20260421-001 --from codex
+python3 .agent-bridge/tools/bridge.py archive TASK-20260421-001
+```
 
-Contributors will be recognized in:
-- README.md acknowledgments
-- Release notes for significant contributions
-- Agent Bridge showcase examples
+## What to Verify
 
----
+Choose checks that fit the change you made. For most documentation or small CLI changes, these are a good baseline:
 
-**Remember**: This project is about demonstrating the future of AI collaboration. Every contribution helps show how agents and humans can work together effectively! 🚀
+```bash
+python3 .agent-bridge/tools/bridge.py --help
+python3 .agent-bridge/tools/bridge.py new-task --help
+python3 .agent-bridge/tools/bridge.py send --help
+python3 .agent-bridge/tools/bridge.py inbox --help
+python3 .agent-bridge/tools/bridge.py read --help
+python3 .agent-bridge/tools/bridge.py complete --help
+python3 .agent-bridge/tools/bridge.py archive --help
+python3 .agent-bridge/tools/bridge.py summarize --help
+```
 
-*Contributing to Agent Bridge means contributing to the future of AI teamwork.* ✨
+If you changed workflow behavior or demo material, also run:
+
+```bash
+./demo/run_demo.sh
+```
+
+If you changed schemas or message shapes, make sure the docs and examples still match.
+
+## Contribution Guidelines
+
+- Keep changes focused. This repository is small, and narrow changes are easier to review.
+- Prefer clear, literal wording over marketing language in docs.
+- Keep examples aligned with the actual CLI.
+- Preserve the current scope unless you are intentionally expanding it.
+- Avoid committing live runtime state from `.agent-bridge/inbox/`, `.agent-bridge/threads/`, `.agent-bridge/registry/tasks/`, or `.agent-bridge/state/`.
+
+## Pull Request Notes
+
+When opening a pull request, it helps to include:
+
+- the problem you were addressing
+- the main files you changed
+- any command output or manual checks you used to verify the change
+- any follow-up work that is still out of scope
